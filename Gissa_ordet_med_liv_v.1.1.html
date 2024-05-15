@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Gissa ordet med liv</title>
+    <style>
+        body {
+            background-color: #caa55f;
+            text-align: center;
+        }
+
+        .word {
+            font-size: 2em;
+            margin-top: 20px;
+            font-family: monospace;
+        }
+
+        input {
+            margin-top: 10px;
+            font-size: 1em;
+        }
+
+        button {
+            margin-top: 10px;
+            font-size: 1em;
+            padding: 5px;
+            background-color: rgb(255, 153, 0);
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .output {
+            margin-top: 20px;
+            width: 400px;
+            height: 200px;
+            padding: 10px;
+            text-align: left;
+            font-size: 1.2em;
+            font-family: monospace;
+        }
+    </style>
+
+</head>
+<body>
+    <div class="word" id="word"></div>
+    <input type="text" id="inputField" placeholder="Gissa på en bokstav">
+    <button id="guessButton">Gissa</button>
+    <div class="output" id="output"></div>
+
+<script>
+    
+    // LISTA MED ORD SOM ANVÄNDS SLUMPVIS //
+    const words = [
+        "stol",
+        "bord",
+        "hund",
+        "katt",
+        "häst",
+        "elefant",
+        "krokodil",
+        "programering",
+        "berg",
+        "pool",
+        "elvisp",
+        "blomma",
+        "vildsvin",
+        "träd",
+        "staket",
+        "studsmatta",
+        "hus",
+        "vedträ",
+        "fönster",
+        "julgran",
+        "åsna"
+    ];
+
+    // SLUMPVIS VÄLJA ORD //
+    let word = words[Math.floor(Math.random() * words.length)];
+
+    // HEMLIGA ORDET //
+    let guessWord = "";
+    for (let i = 0; i < word.length; i++) {
+        guessWord += "_ ";
+    }
+    document.getElementById("word").textContent = guessWord;
+
+    // LIV //
+    let lifes = 7;
+
+    // HANTERA GISSNINGARNA OCH RENSAR OUTPUT FÄLT //
+    let guessedLetters = [];
+    let allGuessedLetters = [];
+
+    document.getElementById("guessButton").addEventListener("click", handleGuess);
+
+    function handleGuess() {
+        document.getElementById("output").innerHTML = ""; 
+        const guess = document.getElementById("inputField").value.toLowerCase();
+        document.getElementById("inputField").value = "";
+
+        if (guessedLetters.includes(guess)) {
+            print("Du har redan gissat på '" + guess + "'.");
+            return;
+        }
+
+        // FÖRLUST //
+        guessedLetters.push(guess);
+        allGuessedLetters.push(guess);
+
+        if (!word.toLowerCase().includes(guess)) {
+            lifes--;
+            print("<strong>Fel gissning!</strong> Du har nu " + lifes + " liv kvar. ");
+            if (lifes === 0) {
+                print("Game over! Ordet var '" + word + "'. Prova igen. ");
+                document.getElementById("guessButton").disabled = true;
+                return;
+            }
+        }
+
+        let guessWord = "";
+        for (let i = 0; i < word.length; i++) {
+            if (guessedLetters.includes(word[i])) {
+                guessWord += word[i] + " ";
+            } else {
+                guessWord += "_ ";
+            }
+        }
+        document.getElementById("word").textContent = guessWord;
+
+        // VINST //
+        if (!guessWord.includes("_")) {
+            print("Grattis, du vann! Ordet var '" + word + "'.");
+            document.getElementById("guessButton").disabled = true;
+            return;
+        }
+
+        print("Gissade bokstäver: " + allGuessedLetters.join(", "));
+    }
+
+    // FUNKTIONER SOM FÖRENKLAR //
+    function print(text) {
+        document.getElementById("output").innerHTML += text;
+    }
+
+</script>
+</body>
+</html>
